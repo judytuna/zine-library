@@ -204,6 +204,50 @@ const planet_killer_crops = {
   }
 };
 
+// Crop configuration for Yummy Treat
+const yummy_treat_crops = {
+  "1": {
+    "x": 75,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "120% 100%"
+  },
+  "2": {
+    "x": 50,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "66.6% 33.3%"
+  },
+  "3": {
+    "x": 0,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "33.3% 33.3%"
+  },
+  "4": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "0% 100%"
+  },
+  "5": {
+    "x": 50,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "73% 100%"
+  }
+};
+
 // Current state
 let currentZine = null;
 let currentPage = 1;
@@ -301,7 +345,8 @@ function getImagePath(zine, page) {
 const cropConfigurations = {
     'forever': forever_crops,
     'kiss-me-son-of-god': kiss_me_son_of_god_crops,
-    'planet-killer': planet_killer_crops
+    'planet-killer': planet_killer_crops,
+    'yummy-treat': yummy_treat_crops
 };
 
 // Apply image cropping for folded zines
