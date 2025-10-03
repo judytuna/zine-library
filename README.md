@@ -26,10 +26,10 @@ public/images/zines/
 
 - **the-anchor** - 8 pages
 - **always-left-behind** - 5 pages
-- **listen-series** - 2 related images (first-listen.jpg, re-listen.jpg)
-- **forever-tempete-coeur** - Single page
+- **free-nelson-mandela** - 2 related images (first-listen.jpg, re-listen.jpg)
+- **forever** - Single page
 - **kiss-me-son-of-god** - Single page
-- **paida-final** - Single page
+- **planet-killer** - Single page
 - **yummy-treat** - Single page
 - **rays-of-light** - Single page
 - **fritz-and-yi** - Single page

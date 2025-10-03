@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zine Library</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Zine Library</h1>
+        <p>Browse and read a collection of zines</p>
+    </header>
+
+    <main id="app">
+        <!-- Grid view of all zines -->
+        <div id="grid-view" class="grid-container">
+            <!-- Zine covers will be populated by JavaScript -->
+        </div>
+
+        <!-- Individual zine viewer -->
+        <div id="zine-viewer" class="zine-viewer hidden">
+            <div class="viewer-header">
+                <button id="back-to-grid" class="back-btn">← Back to Library</button>
+                <h2 id="zine-title"></h2>
+                <div class="page-info">
+                    <span id="page-counter"></span>
+                </div>
+            </div>
+
+            <div class="zine-container">
+                <div class="zine-page-wrapper">
+                    <img id="zine-image" src="" alt="Zine page" class="zine-page">
+                    <div class="nav-overlay">
+                        <div class="nav-left" id="nav-left"></div>
+                        <div class="nav-right" id="nav-right"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
