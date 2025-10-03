@@ -26,49 +26,49 @@ const zines = [
         title: 'Forever',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/forever/fullpage.jpg'
     },
     {
         id: 'kiss-me-son-of-god',
         title: 'Kiss Me Son of God',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/kiss-me-son-of-god/fullpage.jpg'
     },
     {
         id: 'planet-killer',
         title: 'Planet Killer',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/planet-killer/fullpage.jpg'
     },
     {
         id: 'yummy-treat',
         title: 'Yummy Treat',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/yummy-treat/fullpage.jpg'
     },
     {
         id: 'rays-of-light',
         title: 'Rays of Light',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/rays-of-light/fullpage.jpeg'
     },
     {
         id: 'fritz-and-yi',
         title: 'Fritz and Yi',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/fritz-and-yi/fullpage.jpg'
     },
     {
         id: 'love-is-glowing',
         title: 'Love is Glowing',
         type: 'folded-zine',
         pages: 5,
-        coverImage: 'cover'
+        coverImage: 'public/images/zines/love-is-glowing/fullpage.jpg'
     }
 ];
 
@@ -124,7 +124,7 @@ const kiss_me_son_of_god_crops = {
     "w": 25,
     "h": 50,
     "rotation": 180,
-    "transformOrigin": "26% 33%"
+    "transformOrigin": "26.3% 33.3%"
   },
   "2": {
     "x": 0,
@@ -160,6 +160,50 @@ const kiss_me_son_of_god_crops = {
   }
 };
 
+// Crop configuration for Planet Killer
+const planet_killer_crops = {
+  "1": {
+    "x": 75,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 90,
+    "transformOrigin": "90% 50%"
+  },
+  "2": {
+    "x": 50,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 270,
+    "transformOrigin": "83% 44%"
+  },
+  "3": {
+    "x": 0,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 270,
+    "transformOrigin": "43% 18%"
+  },
+  "4": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 90,
+    "transformOrigin": "33.3% 86.3%"
+  },
+  "5": {
+    "x": 50,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 270,
+    "transformOrigin": "53.5% 73%"
+  }
+};
+
 // Current state
 let currentZine = null;
 let currentPage = 1;
@@ -187,18 +231,8 @@ function renderGrid() {
     zines.forEach(zine => {
         const zineCard = document.createElement('div');
         zineCard.className = 'zine-card';
-
-        // Generate cover image path
-        let coverImageSrc;
-        if (zine.coverImage === 'cover') {
-            // For folded zines, show cropped cover from fullpage image
-            coverImageSrc = getImagePath(zine, 1); // Page 1 is the cover
-        } else {
-            coverImageSrc = zine.coverImage;
-        }
-
         zineCard.innerHTML = `
-            <img src="${coverImageSrc}" alt="${zine.title}" class="zine-cover" style="${zine.coverImage === 'cover' ? getCoverStyle(zine) : ''}">
+            <img src="${zine.coverImage}" alt="${zine.title}" class="zine-cover">
             <h3 class="zine-title">${zine.title}</h3>
             <p class="zine-info">${zine.pages} ${zine.pages === 1 ? 'page' : 'pages'}</p>
         `;
@@ -266,7 +300,8 @@ function getImagePath(zine, page) {
 // Use the crop-tool.html to generate these configurations
 const cropConfigurations = {
     'forever': forever_crops,
-    'kiss-me-son-of-god': kiss_me_son_of_god_crops
+    'kiss-me-son-of-god': kiss_me_son_of_god_crops,
+    'planet-killer': planet_killer_crops
 };
 
 // Apply image cropping for folded zines
@@ -388,9 +423,12 @@ function getCoverStyle(zine) {
     const crop = cropConfigurations[zine.id][1]; // Page 1 is the cover
     const rotation = crop.rotation || 0;
 
-    // Apply the same cropping and scaling as the viewer
+    // Apply cropping and appropriate scaling for grid view
     let style = `clip-path: inset(${crop.y}% ${100-crop.x-crop.w}% ${100-crop.y-crop.h}% ${crop.x}%); `;
-    style += `transform: scale(2)`;
+
+    // Use a smaller scale for grid view (covers need to fit in the card)
+    const gridScale = crop.w <= 25 ? 1.5 : 1.2; // Smaller scale for covers vs spreads
+    style += `transform: scale(${gridScale})`;
 
     if (rotation !== 0) {
         style += ` rotate(${rotation}deg)`;
