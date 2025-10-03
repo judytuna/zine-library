@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zine Crop Configuration Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .zine-selector {
+            margin-bottom: 30px;
+        }
+
+        .zine-selector select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 200px;
+        }
+
+        .crop-workspace {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-container {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f9f9f9;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .crop-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 80vh;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-drag: none;
+            -webkit-user-select: none;
+        }
+
+        .crop-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: all;
+            cursor: crosshair;
+        }
+
+        .crop-region {
+            position: absolute;
+            border: 3px solid #007bff;
+            background: rgba(0, 123, 255, 0.1);
+            cursor: move;
+            pointer-events: all;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        .crop-region.active {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .crop-region .label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #007bff;
+            color: white;
+            padding: 2px 6px;
+            font-size: 12px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .crop-region.active .label {
+            background: #ff4757;
+        }
+
+        .controls-panel {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .page-controls {
+            margin-bottom: 20px;
+        }
+
+        .page-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-item.active {
+            background: #e7f3ff;
+            border-color: #007bff;
+        }
+
+        .page-item.configured {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 2px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .crop-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .export-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .config-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .snap-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .snap-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .rotation-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .rotation-controls select {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .snap-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .snap-line {
+            position: absolute;
+            border: 1px dashed #007bff;
+        }
+
+        .snap-line.vertical {
+            width: 0;
+            height: 100%;
+        }
+
+        .snap-line.horizontal {
+            width: 100%;
+            height: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Zine Crop Configuration Tool</h1>
+            <p>Define how to split fullpage zine images into individual pages</p>
+        </div>
+
+        <div class="zine-selector">
+            <label for="zineSelect">Select Zine: </label>
+            <select id="zineSelect">
+                <option value="">Choose a zine to configure...</option>
+            </select>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Select a zine from the dropdown</li>
+                <li>Click on a page in the right panel to select it</li>
+                <li>Drag on the image to create a crop region for that page</li>
+                <li>Repeat for all pages (cover, spreads, back cover)</li>
+                <li>Copy the generated configuration and paste it into your main script</li>
+            </ol>
+        </div>
+
+        <div class="crop-workspace" id="cropWorkspace" style="display: none;">
+            <div class="image-section">
+                <div class="image-container" id="imageContainer">
+                    <img id="cropImage" class="crop-image" src="" alt="Zine to crop" draggable="false">
+                    <div class="crop-overlay" id="cropOverlay">
+                        <div class="snap-grid" id="snapGrid">
+                            <div class="snap-line vertical" style="left: 25%;"></div>
+                            <div class="snap-line vertical" style="left: 50%;"></div>
+                            <div class="snap-line vertical" style="left: 75%;"></div>
+                            <div class="snap-line horizontal" style="top: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="page-controls">
+                    <h3>Pages</h3>
+                    <ul class="page-list" id="pageList">
+                        <li class="page-item" data-page="1">
+                            <span>1. Front Cover</span>
+                            <button class="btn btn-danger btn-small" onclick="clearCrop(1)">Clear</button>
+                        </li>
+                        <li class="page-item" data-page="2">
+                            <span>2. First Spread</span>
+                            <button class="btn btn-danger btn-small" onclick="clearCrop(2)">Clear</button>
+                        </li>
+                        <li class="page-item" data-page="3">
+                            <span>3. Second Spread</span>
+                            <button class="btn btn-danger btn-small" onclick="clearCrop(3)">Clear</button>
+                        </li>
+                        <li class="page-item" data-page="4">
+                            <span>4. Third Spread</span>
+                            <button class="btn btn-danger btn-small" onclick="clearCrop(4)">Clear</button>
+                        </li>
+                        <li class="page-item" data-page="5">
+                            <span>5. Back Cover</span>
+                            <button class="btn btn-danger btn-small" onclick="clearCrop(5)">Clear</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="snap-controls">
+                    <h4>Quick Snap</h4>
+                    <div class="snap-buttons">
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('top-left-half')">Top-Left Half</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('top-right-half')">Top-Right Half</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('bottom-left-half')">Bottom-Left Half</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('bottom-right-half')">Bottom-Right Half</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('top-left-quad')">Top-Left Quad</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('top-right-quad')">Top-Right Quad</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('bottom-left-quad')">Bottom-Left Quad</button>
+                        <button class="btn btn-primary btn-small" onclick="snapToZone('bottom-right-quad')">Bottom-Right Quad</button>
+                    </div>
+                </div>
+
+                <div class="rotation-controls" id="rotationControls" style="display: none;">
+                    <h4>Page Rotation</h4>
+                    <label>Bottom of page is at:</label>
+                    <select id="rotationSelect">
+                        <option value="0">Bottom (0°)</option>
+                        <option value="90">Right side (90°)</option>
+                        <option value="180">Top (180°)</option>
+                        <option value="270">Left side (270°)</option>
+                    </select>
+                </div>
+
+                <div class="crop-info" id="cropInfo">
+                    <strong>Selected:</strong> None<br>
+                    <em>Click a page above, then drag on the image or use quick snap buttons.</em>
+                </div>
+
+                <button class="btn btn-success" onclick="previewPage()" style="width: 100%; margin-top: 10px;">
+                    Preview Selected Page
+                </button>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3>Configuration Output</h3>
+            <p>Copy this configuration and paste it into your main script.js file:</p>
+            <div class="config-output" id="configOutput">
+                // Select a zine and configure crops to see the generated code here
+            </div>
+            <button class="btn btn-primary" onclick="copyConfig()" style="margin-top: 10px;">
+                Copy Configuration
+            </button>
+        </div>
+    </div>
+
+    <script src="crop-tool.js"></script>
+</body>
+</html>

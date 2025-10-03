@@ -24,53 +24,141 @@ const zines = [
     {
         id: 'forever',
         title: 'Forever',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/forever/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'kiss-me-son-of-god',
         title: 'Kiss Me Son of God',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/kiss-me-son-of-god/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'planet-killer',
         title: 'Planet Killer',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/planet-killer/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'yummy-treat',
         title: 'Yummy Treat',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/yummy-treat/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'rays-of-light',
         title: 'Rays of Light',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/rays-of-light/fullpage.jpeg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'fritz-and-yi',
         title: 'Fritz and Yi',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/fritz-and-yi/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     },
     {
         id: 'love-is-glowing',
         title: 'Love is Glowing',
-        type: 'single-page',
-        pages: 1,
-        coverImage: 'public/images/zines/love-is-glowing/fullpage.jpg'
+        type: 'folded-zine',
+        pages: 5,
+        coverImage: 'cover'
     }
 ];
+
+// Crop configuration for Forever
+const forever_crops = {
+  "1": {
+    "x": 50,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "59.3% 33.3%"
+  },
+  "2": {
+    "x": 0,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "33.3% 33.3%"
+  },
+  "3": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "0% 100%"
+  },
+  "4": {
+    "x": 50,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "100% 100%"
+  },
+  "5": {
+    "x": 75,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "76.3% 33.3%"
+  }
+};
+
+// Crop configuration for Kiss Me Son of God
+const kiss_me_son_of_god_crops = {
+  "1": {
+    "x": 0,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "26% 33%"
+  },
+  "2": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "0% 100%"
+  },
+  "3": {
+    "x": 50,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0,
+    "transformOrigin": "100% 100%"
+  },
+  "4": {
+    "x": 50,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "66.6% 33.3%"
+  },
+  "5": {
+    "x": 25,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180,
+    "transformOrigin": "43% 33.3%"
+  }
+};
 
 // Current state
 let currentZine = null;
@@ -99,8 +187,18 @@ function renderGrid() {
     zines.forEach(zine => {
         const zineCard = document.createElement('div');
         zineCard.className = 'zine-card';
+
+        // Generate cover image path
+        let coverImageSrc;
+        if (zine.coverImage === 'cover') {
+            // For folded zines, show cropped cover from fullpage image
+            coverImageSrc = getImagePath(zine, 1); // Page 1 is the cover
+        } else {
+            coverImageSrc = zine.coverImage;
+        }
+
         zineCard.innerHTML = `
-            <img src="${zine.coverImage}" alt="${zine.title}" class="zine-cover">
+            <img src="${coverImageSrc}" alt="${zine.title}" class="zine-cover" style="${zine.coverImage === 'cover' ? getCoverStyle(zine) : ''}">
             <h3 class="zine-title">${zine.title}</h3>
             <p class="zine-info">${zine.pages} ${zine.pages === 1 ? 'page' : 'pages'}</p>
         `;
@@ -130,6 +228,15 @@ function updateZineViewer() {
     const imagePath = getImagePath(currentZine, currentPage);
     zineImage.src = imagePath;
 
+    // Handle folded zine cropping
+    if (currentZine.type === 'folded-zine') {
+        applyImageCrop(currentPage);
+    } else {
+        // Reset any cropping
+        zineImage.style.clipPath = '';
+        zineImage.style.transform = '';
+    }
+
     // Update page counter
     if (currentZine.pages > 1) {
         pageCounter.textContent = `Page ${currentPage} of ${currentZine.pages}`;
@@ -142,7 +249,7 @@ function updateZineViewer() {
 function getImagePath(zine, page) {
     const basePath = `public/images/zines/${zine.id}`;
 
-    if (zine.type === 'single-page') {
+    if (zine.type === 'folded-zine') {
         return `${basePath}/fullpage.${zine.id === 'rays-of-light' ? 'jpeg' : 'jpg'}`;
     } else if (zine.type === 'series') {
         const files = ['first-listen.jpg', 're-listen.jpg'];
@@ -153,6 +260,77 @@ function getImagePath(zine, page) {
         const extension = (zine.id === 'the-anchor' && page === 7) ? 'png' : 'jpg';
         return `${basePath}/page-${pageNum}.${extension}`;
     }
+}
+
+// Crop configurations for folded zines
+// Use the crop-tool.html to generate these configurations
+const cropConfigurations = {
+    'forever': forever_crops,
+    'kiss-me-son-of-god': kiss_me_son_of_god_crops
+};
+
+// Apply image cropping for folded zines
+function applyImageCrop(page) {
+    if (!currentZine || !cropConfigurations[currentZine.id]) {
+        // Fallback to default 4-quadrant layout if no custom config
+        const defaultCrops = {
+            1: { x: 0, y: 0, w: 50, h: 50 },     // Top-left (cover + back cover)
+            2: { x: 50, y: 0, w: 50, h: 50 },    // Top-right (first spread)
+            3: { x: 0, y: 50, w: 50, h: 50 },    // Bottom-left (second spread)
+            4: { x: 50, y: 50, w: 50, h: 50 },   // Bottom-right (third spread)
+            5: { x: 0, y: 0, w: 50, h: 50 }      // Back to top-left (back cover)
+        };
+
+        const crop = defaultCrops[page];
+        if (crop) {
+            applyCropToImage(crop);
+        }
+        return;
+    }
+
+    const crop = cropConfigurations[currentZine.id][page];
+    if (crop) {
+        applyCropToImage(crop);
+    }
+}
+
+// Helper function to apply crop styling to image
+function applyCropToImage(crop) {
+    const rotation = crop.rotation || 0;
+
+    // Reset any previous positioning
+    zineImage.style.position = 'static';
+    zineImage.style.left = '';
+    zineImage.style.top = '';
+
+    // Use clip-path for cropping (works with rotation)
+    zineImage.style.clipPath = `inset(${crop.y}% ${100-crop.x-crop.w}% ${100-crop.y-crop.h}% ${crop.x}%)`;
+
+    // Use a fixed scale of 2 across the board
+    let scale = 2;
+
+    // Apply both scaling and rotation
+    let transform = `scale(${scale})`;
+    if (rotation !== 0) {
+        transform += ` rotate(${rotation}deg)`;
+    }
+
+    zineImage.style.transform = transform;
+
+    // Use custom transform origin if provided, otherwise calculate from crop center
+    if (crop.transformOrigin) {
+        zineImage.style.transformOrigin = crop.transformOrigin;
+    } else {
+        // Calculate the center of the crop area
+        const originX = crop.x + (crop.w / 2);
+        const originY = crop.y + (crop.h / 2);
+        zineImage.style.transformOrigin = `${originX}% ${originY}%`;
+    }
+
+    // Ensure container doesn't clip the rotated content
+    const container = zineImage.parentElement;
+    container.style.overflow = 'visible';
+    container.style.transform = '';
 }
 
 // Navigate to previous page
@@ -199,6 +377,34 @@ function setupEventListeners() {
             }
         }
     });
+}
+
+// Get cover style for grid display
+function getCoverStyle(zine) {
+    if (!cropConfigurations[zine.id] || !cropConfigurations[zine.id][1]) {
+        return '';
+    }
+
+    const crop = cropConfigurations[zine.id][1]; // Page 1 is the cover
+    const rotation = crop.rotation || 0;
+
+    // Apply the same cropping and scaling as the viewer
+    let style = `clip-path: inset(${crop.y}% ${100-crop.x-crop.w}% ${100-crop.y-crop.h}% ${crop.x}%); `;
+    style += `transform: scale(2)`;
+
+    if (rotation !== 0) {
+        style += ` rotate(${rotation}deg)`;
+    }
+
+    if (crop.transformOrigin) {
+        style += `; transform-origin: ${crop.transformOrigin}`;
+    } else {
+        const originX = crop.x + (crop.w / 2);
+        const originY = crop.y + (crop.h / 2);
+        style += `; transform-origin: ${originX}% ${originY}%`;
+    }
+
+    return style;
 }
 
 // Start the app
