@@ -248,6 +248,123 @@ const yummy_treat_crops = {
   }
 };
 
+// Crop configuration for Rays of Light
+const rays_of_light_crops = {
+  "1": {
+    "x": 25,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 0
+  },
+  "2": {
+    "x": 50,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0
+  },
+  "3": {
+    "x": 50,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180
+  },
+  "4": {
+    "x": 0,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 0
+  },
+  "5": {
+    "x": 0,
+    "y": 50,
+    "w": 25,
+    "h": 50,
+    "rotation": 0
+  }
+};
+
+// Crop configuration for Fritz and Yi
+const fritz_and_yi_crops = {
+  "1": {
+    "x": 50,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180
+  },
+  "2": {
+    "x": 0,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 180
+  },
+  "3": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0
+  },
+  "4": {
+    "x": 50,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 0
+  },
+  "5": {
+    "x": 75,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 180
+  }
+};
+
+// Crop configuration for Love is Glowing
+const love_is_glowing_crops = {
+  "1": {
+    "x": 25,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 0
+  },
+  "2": {
+    "x": 50,
+    "y": 0,
+    "w": 50,
+    "h": 50,
+    "rotation": 0
+  },
+  "3": {
+    "x": 50,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 180
+  },
+  "4": {
+    "x": 0,
+    "y": 50,
+    "w": 50,
+    "h": 50,
+    "rotation": 180
+  },
+  "5": {
+    "x": 0,
+    "y": 0,
+    "w": 25,
+    "h": 50,
+    "rotation": 0
+  }
+};
+
 // Current state
 let currentZine = null;
 let currentPage = 1;
@@ -346,7 +463,10 @@ const cropConfigurations = {
     'forever': forever_crops,
     'kiss-me-son-of-god': kiss_me_son_of_god_crops,
     'planet-killer': planet_killer_crops,
-    'yummy-treat': yummy_treat_crops
+    'yummy-treat': yummy_treat_crops,
+    'rays-of-light': rays_of_light_crops,
+    'fritz-and-yi': fritz_and_yi_crops,
+    'love-is-growing': love_is_glowing_crops
 };
 
 // Apply image cropping for folded zines
